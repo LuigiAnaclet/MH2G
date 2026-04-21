@@ -35,6 +35,12 @@
     .nav-brand{font-weight:900;font-size:1.4rem;color:var(--green-dark);letter-spacing:-0.02em;}
     .nav-brand em{color:var(--orange);font-style:normal;}
     .nav-links{display:flex;gap:6px;list-style:none;}
+    .nav-toggle{
+      display:none;align-items:center;justify-content:center;
+      width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);
+      background:#fff;color:var(--green-dark);font-size:1.4rem;font-weight:900;cursor:pointer;
+    }
+    .nav-toggle:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
     .nav-links a{
       font-size:0.875rem;font-weight:700;color:var(--text-muted);
       text-decoration:none;padding:7px 14px;border-radius:100px;
@@ -198,14 +204,35 @@
       .activities-grid,.fleet-grid,.material-grid,.prestations-grid{grid-template-columns:1fr 1fr}
       .steps-row{flex-direction:column;gap:20px}.steps-row::before{display:none}
       .before-after-grid{grid-template-columns:1fr}
-      .nav-links{display:none}
+      nav{padding:10px 4%;}
+      .logo-placeholder{width:42px;height:42px}
+      .nav-brand{font-size:1.2rem}
+      .nav-toggle{display:inline-flex}
+      .nav-cta{display:none}
+      .nav-links{
+        display:none;position:absolute;top:100%;left:4%;right:4%;
+        flex-direction:column;gap:4px;padding:8px;background:#fff;
+        border:1.5px solid var(--border);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,0.08);
+      }
+      nav.mobile-open .nav-links{display:flex}
+      .nav-links a{display:block;padding:11px 14px;border-radius:10px}
     }
     @media(max-width:600px){
       .activities-grid,.fleet-grid,.material-grid,.prestations-grid{grid-template-columns:1fr}
       .stats-row{flex-direction:column}
       .stat{border-right:none;border-bottom:1.5px solid var(--border)}
       .stat:last-child{border-bottom:none}
+      .hero{padding:100px 4% 56px}
+      .hero-sub{font-size:1rem;line-height:1.6}
+      .hero-badge{font-size:0.72rem;padding:6px 14px}
+      .hero-btns a,.btn-primary,.btn-orange,.btn-outline{width:100%;text-align:center}
+      section{padding:72px 4%}
+      .detail-body-section{padding:20px 4% 64px}
+      .form-section{padding:22px}
+      .form-actions{flex-direction:column}
+      .form-actions button{width:100%}
       .footer-grid{grid-template-columns:1fr;gap:28px}
+      .footer-bottom{flex-direction:column;align-items:flex-start;gap:10px}
       .form-grid{grid-template-columns:1fr}
       .form-group.full,.form-actions{grid-column:unset}
     }
@@ -226,6 +253,7 @@
       <li><a href="#wash-mq" data-route="wash-mq" data-page="wash-mq">Wash MQ</a></li>
       <li><a href="#loca-pro" data-route="loca-pro" data-page="loca-pro">Loca Pro 97</a></li>
     </ul>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Ouvrir le menu">☰</button>
     <a class="nav-cta" href="#rent-car" data-route="rent-car">Réserver →</a>
   </nav>
 
@@ -495,6 +523,22 @@
 
   <script>
     const routes = ['home', 'rent-car', 'wash-mq', 'loca-pro'];
+    const nav = document.querySelector('nav');
+    const navToggle = document.querySelector('.nav-toggle');
+
+    function closeMobileMenu() {
+      nav.classList.remove('mobile-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'Ouvrir le menu');
+      navToggle.textContent = '☰';
+    }
+
+    navToggle?.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('mobile-open');
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+      navToggle.setAttribute('aria-label', isOpen ? 'Fermer le menu' : 'Ouvrir le menu');
+      navToggle.textContent = isOpen ? '✕' : '☰';
+    });
 
     function showPage(route) {
       const safeRoute = routes.includes(route) ? route : 'home';
@@ -505,6 +549,7 @@
       document.querySelectorAll('[data-page]').forEach(link => link.classList.toggle('active', link.dataset.page === safeRoute));
       window.scrollTo({ top: 0, behavior: 'smooth' });
       revealElements();
+      closeMobileMenu();
     }
 
     function routeFromHash() {
